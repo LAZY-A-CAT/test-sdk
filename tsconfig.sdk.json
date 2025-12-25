@@ -1,0 +1,14 @@
+// tsconfig.sdk.json
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
