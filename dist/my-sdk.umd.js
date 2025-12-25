@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.MySDK = {}));
-})(this, (function (exports) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.MySDK = factory());
+})(this, (function () { 'use strict';
 
     /******************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -33849,18 +33849,13 @@
 
     var instances = new Map();
     function getElementKey(el) {
-        if (typeof el === "string") {
-            return el; // 如 "#my-div"
-        }
-        // 如果是 HTMLElement，优先用 id，没有就用唯一标识
-        if (el.id) {
+        if (typeof el === "string")
+            return el;
+        if (el.id)
             return "#" + el.id;
-        }
-        // 或者生成/使用 data 属性
         var existingKey = el.getAttribute("data-sdk-key");
         if (existingKey)
             return existingKey;
-        // 否则生成一个唯一 key 并存到元素上（避免重复创建）
         var uniqueKey = "sdk-".concat(Date.now(), "-").concat(Math.random()
             .toString(36)
             .slice(2, 9));
@@ -33878,22 +33873,20 @@
         }
         var root = clientExports.createRoot(container);
         root.render(React.createElement(MyFeaturePage, __assign({}, props)));
-        // ✅ 统一转为 string key
         var key = getElementKey(target);
         instances.set(key, { root: root, container: container });
     }
     function unmount(target) {
-        var key = getElementKey(target); // ✅ 安全转 string
+        var key = getElementKey(target);
         var instance = instances.get(key);
         if (instance) {
             instance.root.unmount();
             instances.delete(key);
         }
     }
-    // 挂载到 window
-    window.MySDK = { render: render, unmount: unmount };
+    // ✅ 关键：创建 SDK 对象并 default 导出
+    var MySDK = { render: render, unmount: unmount };
 
-    exports.render = render;
-    exports.unmount = unmount;
+    return MySDK;
 
 }));
