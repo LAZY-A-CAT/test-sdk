@@ -3,7 +3,8 @@ import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
-import replace from '@rollup/plugin-replace'; // ←←← 新增导入
+import replace from '@rollup/plugin-replace';
+import postcss from 'rollup-plugin-postcss'; // ✅ 正确导入
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -25,7 +26,6 @@ export default {
     alias({
       entries: [{ find: '@', replacement: resolve(__dirname, '../src') }]
     }),
-    // 🔥 关键：在 nodeResolve 之前替换 process.env.NODE_ENV
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
       preventAssignment: true,
@@ -36,6 +36,12 @@ export default {
       tsconfig: './tsconfig.sdk.json',
       jsx: 'react',
     }),
+    postcss({
+      extensions: ['.css', '.scss'],
+      extract: false,   // 内联 CSS 到 JS
+      minimize: true,
+      use: ['sass'],    // 使用 sass 编译 .scss
+    }),
   ],
-  external: [], // 打包 React 进去（UMD）
+  external: [],
 };
