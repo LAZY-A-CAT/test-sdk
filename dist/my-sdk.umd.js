@@ -22766,7 +22766,7 @@
 
     var service = axios.create({
         // baseURL: baseURL(), // 所有请求的公共地址部分
-        baseURL: process.env.REACT_APP_DEVLOPMENT_BASE_UL, // 所有请求的公共地址部分
+        baseURL: "https://api-test.incsapp.com", // 所有请求的公共地址部分
         timeout: 30000,
         // headers: { 'Content-Type': 'application/json' ,'x-access-token':localStorage.getItem('token')},
         headers: {
@@ -23102,7 +23102,7 @@
         var _d = reactExports.useState(""), captcha = _d[0], setCaptcha = _d[1];
         // 获取验证码
         var randomRef = reactExports.useRef(null);
-        var baseUrl = process.env.REACT_APP_DEVLOPMENT_BASE_UL;
+        var baseUrl = "https://api-test.incsapp.com";
         var getCaptcha = function () {
             if (randomRef && randomRef.current) {
                 randomRef.current.setAttribute("src", "".concat(baseUrl, "/captcha?v=").concat(Math.random()));
