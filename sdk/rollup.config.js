@@ -1,8 +1,9 @@
 // sdk/rollup.config.js
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs'; // ←←← 新增
+import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
+import replace from '@rollup/plugin-replace'; // ←←← 新增导入
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -24,8 +25,13 @@ export default {
     alias({
       entries: [{ find: '@', replacement: resolve(__dirname, '../src') }]
     }),
-    nodeResolve({ browser: true }), // 先解析 node_modules
-    commonjs(), // ←←← 必须放在 nodeResolve 之后，处理 CJS 模块
+    // 🔥 关键：在 nodeResolve 之前替换 process.env.NODE_ENV
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      preventAssignment: true,
+    }),
+    nodeResolve({ browser: true }),
+    commonjs(),
     typescript({
       tsconfig: './tsconfig.sdk.json',
       jsx: 'react',
