@@ -4,7 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
 import replace from '@rollup/plugin-replace';
-import postcss from 'rollup-plugin-postcss'; // ✅ 正确导入
+import postcss from 'rollup-plugin-postcss';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -23,12 +23,14 @@ export default {
     },
   },
   plugins: [
-    alias({
-      entries: [{ find: '@', replacement: resolve(__dirname, '../src') }]
-    }),
+    // 🔥 第一个！确保在任何模块解析前替换 process.env
     replace({
       'process.env.NODE_ENV': JSON.stringify('production'),
       preventAssignment: true,
+    }),
+    // 然后才是 alias、resolve 等
+    alias({
+      entries: [{ find: '@', replacement: resolve(__dirname, '../src') }]
     }),
     nodeResolve({ browser: true }),
     commonjs(),
@@ -38,9 +40,9 @@ export default {
     }),
     postcss({
       extensions: ['.css', '.scss'],
-      extract: false,   // 内联 CSS 到 JS
+      extract: false,
       minimize: true,
-      use: ['sass'],    // 使用 sass 编译 .scss
+      use: ['sass'],
     }),
   ],
   external: [],
